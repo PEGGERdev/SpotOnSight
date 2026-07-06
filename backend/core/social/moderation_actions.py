@@ -47,7 +47,7 @@ class SocialModerationActions:
         row = self.repos.moderation_reports.find_one({"_id": ObjectId(inserted_id)})
         if not row:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Moderation report creation failed")
-        return self.actions._moderation_report_public(row)
+        return self.actions.moderation_support.moderation_report_public(row)
 
     def list_moderation_notifications(self, current_user):
         me_id = self.actions.me_id(current_user)
@@ -59,7 +59,7 @@ class SocialModerationActions:
         if report_status and report_status != "all":
             query["status"] = as_text(report_status).lower()
         rows = self.repos.moderation_reports.find_many_sorted(query, sort_field="created_at", sort_direction=-1, limit=limit)
-        return [self.actions._moderation_report_public(row) for row in rows]
+        return [self.actions.moderation_support.moderation_report_public(row) for row in rows]
 
     def review_moderation_report(self, report_id: str, req, admin_user):
         ensure_indexes(self.repos)
@@ -131,7 +131,7 @@ class SocialModerationActions:
         updated = self.repos.moderation_reports.find_one({"_id": ObjectId(report_id)})
         if not updated:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Moderation report update failed")
-        return self.actions._moderation_report_public(updated)
+        return self.actions.moderation_support.moderation_report_public(updated)
 
     def list_moderated_users(self, query: str, limit: int):
         regex = re.compile(re.escape(as_text(query)), re.IGNORECASE) if as_text(query) else None

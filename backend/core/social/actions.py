@@ -149,7 +149,6 @@ class SocialActions:
             }
         )
 
-    @staticmethod
     def _user_summary(self, user_id: str) -> dict[str, Any] | None:
         return self.moderation_support.user_summary(user_id)
 
