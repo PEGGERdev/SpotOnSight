@@ -14,7 +14,7 @@ export function createAppRouter(appCtx) {
   router.beforeEach((to) => {
     const isAuth = appCtx.ui.isAuthenticated()
 
-    if (to.meta.requiresAuth && !isAuth) {
+    if (to.meta.requiresAuth === true && !isAuth) {
       return routeToAuth()
     }
     if (to.meta.guestOnly && isAuth) {

@@ -4,7 +4,7 @@ import AOS from 'aos'
 import { buildAppContext } from './bootstrap/appBootstrap'
 import { APP_CTX_KEY } from './core/injection'
 import { createAppRouter } from './router'
-import { ROUTE_NAMES, routeToAuth } from './router/routeSpec'
+import { ROUTE_NAMES, ROUTE_PATHS, routeToAuth } from './router/routeSpec'
 import {
   persistFilterSubscriptions,
   persistSession,
@@ -92,6 +92,13 @@ watch(
   },
   { immediate: true },
 )
+
+router.isReady().then(() => {
+  const currentRoute = router.currentRoute.value
+  if (!appCtx.ui.isAuthenticated() && String(currentRoute?.name || '') === ROUTE_NAMES.AUTH && !currentRoute?.meta?.guestOnly) {
+    void router.replace(ROUTE_PATHS.MAP)
+  }
+})
 
 watch(
   () => appCtx.state.ui.theme,
