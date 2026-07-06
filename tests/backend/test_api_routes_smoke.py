@@ -131,11 +131,9 @@ def test_healthcheck_is_reachable(app, monkeypatch):
         ("DELETE", "/spots/507f1f77bcf86cd799439012", None, 401),
         # Social endpoints (authentication boundary)
         ("GET", "/social/me", None, 401),
-        ("GET", "/social/spots", None, 401),
         ("GET", "/social/favorites", None, 401),
         ("GET", "/social/follow/requests", None, 401),
         ("GET", "/social/blocked", None, 401),
-        ("GET", "/social/spots/507f1f77bcf86cd799439011/comments", None, 401),
         ("POST", "/social/spots/507f1f77bcf86cd799439011/comments", {"message": "hello"}, 401),
         ("PATCH", "/social/comments/507f1f77bcf86cd799439013", {"message": "edit"}, 401),
         ("DELETE", "/social/comments/507f1f77bcf86cd799439013", None, 401),

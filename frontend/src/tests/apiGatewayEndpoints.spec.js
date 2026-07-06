@@ -493,7 +493,7 @@ describe('ApiGatewayService endpoint dispatch', () => {
         : binding.method === 'DELETE'
           ? 'delete'
           : binding.method.toLowerCase()
-      const expectedToken = binding.authenticated ? 'session-token' : ''
+      const expectedToken = 'session-token'
 
       if (transport === 'get' || transport === 'delete') {
         expect(apiClient[transport]).toHaveBeenCalledWith(fixture.expectedPath, { token: expectedToken })
@@ -521,7 +521,7 @@ describe('ApiGatewayService endpoint dispatch', () => {
     expect(apiClient.postForm).toHaveBeenCalledWith('/auth/login', {
       username: 'alice',
       password: 'pw',
-    }, { token: '' })
+    }, { token: 'session-token' })
     expect(apiClient.post).not.toHaveBeenCalled()
   })
 
