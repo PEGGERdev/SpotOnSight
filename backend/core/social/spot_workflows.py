@@ -98,7 +98,7 @@ class SpotWorkflowExecutor:
         self.actions = actions
         self.runtime = WorkflowRuntime(actors=_build_actor_registry(), services=self._build_services())
 
-    def list_visible_spots(self, current_user: dict[str, Any]):
+    def list_visible_spots(self, current_user: dict[str, Any] | None):
         return self._run("spots.list_visible", principal=current_user).result
 
     def create_spot(self, req, current_user: dict[str, Any]):

@@ -59,5 +59,7 @@ def ensure_admin_user(repository) -> dict | None:
         return None
 
 
-def is_admin_user(user_doc: dict) -> bool:
+def is_admin_user(user_doc: dict | None) -> bool:
+    if user_doc is None:
+        return False
     return _is_admin_user(user_doc)

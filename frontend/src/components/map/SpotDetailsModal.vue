@@ -1,5 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { routeToAuth } from '../../router/routeSpec'
 import ActionButton from '../common/ActionButton.vue'
 import AppTextField from '../common/AppTextField.vue'
 import ReportContentModal from '../common/ReportContentModal.vue'
@@ -40,11 +42,20 @@ const props = defineProps({
   onReportComment: { type: Function, default: null },
 })
 
+const router = useRouter()
 const emit = defineEmits(['create-meetup-at-spot'])
 
 const shareText = ref('')
 const reportOpen = ref(false)
 const reportBusy = ref(false)
+
+function requireAuth() {
+  if (!String(props.currentUserId || '').trim()) {
+    router.push(routeToAuth())
+    return false
+  }
+  return true
+}
 
 watch(
   () => props.spot,
@@ -56,6 +67,7 @@ watch(
 
 async function submitShare() {
   if (!props.canShare || typeof props.onShare !== 'function') return
+  if (!requireAuth()) return
   const ok = await props.onShare(shareText.value)
   if (ok) {
     shareText.value = ''
@@ -63,12 +75,14 @@ async function submitShare() {
 }
 
 function editSpot() {
+  if (!requireAuth()) return
   if (typeof props.onEdit === 'function') {
     props.onEdit()
   }
 }
 
 function deleteSpot() {
+  if (!requireAuth()) return
   if (typeof props.onDelete === 'function') {
     props.onDelete()
   }
@@ -76,6 +90,7 @@ function deleteSpot() {
 
 function toggleFavorite() {
   if (!props.canFavorite) return
+  if (!requireAuth()) return
   props.onToggleFavorite()
 }
 
@@ -86,6 +101,7 @@ function goToSpot() {
 
 function reportSpot() {
   if (!props.canReport || typeof props.onReport !== 'function') return
+  if (!requireAuth()) return
   reportOpen.value = true
 }
 
@@ -104,6 +120,7 @@ async function submitReport(payload) {
 }
 
 function createMeetupAtSpot() {
+  if (!requireAuth()) return
   emit('create-meetup-at-spot', props.spot)
 }
 

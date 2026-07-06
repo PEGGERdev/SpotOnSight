@@ -107,5 +107,7 @@ def spot_document_by_id(r: SocialRepositories, spot_id: str) -> dict[str, Any] |
     return r.spots.find_one(spot_lookup_query(spot_id))
 
 
-def viewer_user_id(current_user: dict[str, Any]) -> str:
+def viewer_user_id(current_user: dict[str, Any] | None) -> str:
+    if current_user is None:
+        return ""
     return serialize_id(current_user.get("_id"))

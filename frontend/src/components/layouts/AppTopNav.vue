@@ -40,12 +40,14 @@ const NOTIFICATION_CATEGORY_LABELS = {
 
 const navEntries = computed(() => {
   const items = [
-    { key: ROUTE_NAMES.SOCIAL, label: 'Social', icon: 'bi-people', to: routeToSocial() },
     { key: ROUTE_NAMES.MAP, label: 'Map', icon: 'bi-map', to: routeToMap() },
-    { key: ROUTE_NAMES.HOME, label: 'Home', icon: 'bi-house', to: routeToHome() },
   ]
-  if (Boolean(me.value?.is_admin)) {
-    items.unshift({ key: ROUTE_NAMES.ADMIN, label: 'Admin', icon: 'bi-shield-lock', to: routeToAdmin() })
+  if (isAuth.value) {
+    items.push({ key: ROUTE_NAMES.SOCIAL, label: 'Social', icon: 'bi-people', to: routeToSocial() })
+    items.push({ key: ROUTE_NAMES.HOME, label: 'Home', icon: 'bi-house', to: routeToHome() })
+    if (Boolean(me.value?.is_admin)) {
+      items.unshift({ key: ROUTE_NAMES.ADMIN, label: 'Admin', icon: 'bi-shield-lock', to: routeToAdmin() })
+    }
   }
   return items
 })
@@ -129,9 +131,13 @@ const incomingCount = computed(() => {
 
 const primaryEntries = computed(() => navEntries.value)
 
+const isAuth = computed(() => app.ui.isAuthenticated())
+
 const show = computed(() => {
-  if (!app.ui.isAuthenticated()) return false
-  return route.name !== ROUTE_NAMES.AUTH
+  const name = String(route.name || '')
+  if (name === ROUTE_NAMES.AUTH) return false
+  if (isAuth.value) return true
+  return name === ROUTE_NAMES.MAP
 })
 
 const navIconOnly = computed(() => compactBySpace.value)
@@ -336,33 +342,49 @@ function notificationCategory(entry) {
       </div>
 
       <div class="app-top-nav__tools">
-        <ActionButton
-          :class-name="notificationsOpen ? 'btn btn-primary app-top-nav__tool-btn app-top-nav__tool-btn--icon-only' : 'btn btn-outline-secondary app-top-nav__tool-btn app-top-nav__tool-btn--icon-only'"
-          icon="bi-bell"
-          :label="isMobileBottomNav ? '' : (navIconOnly ? '' : `Notifications (${logCount})`)"
-          :icon-only="isMobileBottomNav || navIconOnly"
-          aria-label="Open notification log"
-          @click="toggleNotifications"
-        />
-        <ActionButton
-          :class-name="userTriggerClass"
-          aria-label="Open user menu"
-          @click="toggleUserMenu"
-        >
-          <span :class="userNavExpanded ? 'app-top-nav__user-trigger app-top-nav__user-trigger--expanded' : 'app-top-nav__user-trigger'">
-            <span class="app-top-nav__user-avatar" v-if="userAvatar">
-              <img :src="userAvatar" alt="profile avatar" loading="lazy" />
+        <template v-if="isAuth">
+          <ActionButton
+            :class-name="notificationsOpen ? 'btn btn-primary app-top-nav__tool-btn app-top-nav__tool-btn--icon-only' : 'btn btn-outline-secondary app-top-nav__tool-btn app-top-nav__tool-btn--icon-only'"
+            icon="bi-bell"
+            :label="isMobileBottomNav ? '' : (navIconOnly ? '' : `Notifications (${logCount})`)"
+            :icon-only="isMobileBottomNav || navIconOnly"
+            aria-label="Open notification log"
+            @click="toggleNotifications"
+          />
+          <ActionButton
+            :class-name="userTriggerClass"
+            aria-label="Open user menu"
+            @click="toggleUserMenu"
+          >
+            <span :class="userNavExpanded ? 'app-top-nav__user-trigger app-top-nav__user-trigger--expanded' : 'app-top-nav__user-trigger'">
+              <span class="app-top-nav__user-avatar" v-if="userAvatar">
+                <img :src="userAvatar" alt="profile avatar" loading="lazy" />
+              </span>
+              <span class="app-top-nav__user-avatar app-top-nav__user-avatar--empty" v-else>
+                <i class="bi bi-person"></i>
+              </span>
+              <span :class="showUserNavName ? 'app-top-nav__user-name app-top-nav__user-name--visible' : 'app-top-nav__user-name'">{{ userNavName }}</span>
             </span>
-            <span class="app-top-nav__user-avatar app-top-nav__user-avatar--empty" v-else>
-              <i class="bi bi-person"></i>
-            </span>
-            <span :class="showUserNavName ? 'app-top-nav__user-name app-top-nav__user-name--visible' : 'app-top-nav__user-name'">{{ userNavName }}</span>
-          </span>
-        </ActionButton>
+          </ActionButton>
+        </template>
+        <template v-else>
+          <ActionButton
+            class-name="btn btn-outline-primary app-top-nav__tool-btn"
+            icon="bi-box-arrow-in-right"
+            label="Sign In"
+            @click="router.push(routeToAuth())"
+          />
+          <ActionButton
+            class-name="btn btn-primary app-top-nav__tool-btn"
+            icon="bi-person-plus"
+            label="Register"
+            @click="router.push(routeToAuth())"
+          />
+        </template>
       </div>
     </div>
 
-    <Transition name="app-nav-expand">
+    <Transition name="app-nav-expand" v-if="isAuth">
       <div class="app-top-nav__panel" ref="panelRoot" v-if="notificationsOpen || userMenuOpen">
         <TopNavNotificationsPanel
           v-if="notificationsOpen"

@@ -89,11 +89,6 @@ export class UsersService extends ApiStateService {
   }
 
   async profile(userId) {
-    if (!this.token()) {
-      this.captureError('Authentication required', 'Authentication required')
-      return null
-    }
-
     const id = String(userId || '').trim()
     if (!id) {
       this.captureError('User id is required', 'User id is required')

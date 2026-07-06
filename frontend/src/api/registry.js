@@ -149,6 +149,7 @@ registerApiEndpoint({
   key: API_ENDPOINTS.SOCIAL_USERS_PROFILE,
   method: 'GET',
   path: '/social/users/{userId}/profile',
+  authenticated: false,
 })
 
 registerApiEndpoint({
@@ -161,6 +162,7 @@ registerApiEndpoint({
   key: API_ENDPOINTS.SOCIAL_SPOTS_LIST,
   method: 'GET',
   path: '/social/spots',
+  authenticated: false,
 })
 
 registerApiEndpoint({
@@ -335,6 +337,7 @@ registerApiEndpoint({
   key: API_ENDPOINTS.SOCIAL_COMMENTS_LIST,
   method: 'GET',
   path: '/social/spots/{spotId}/comments',
+  authenticated: false,
 })
 
 registerApiEndpoint({

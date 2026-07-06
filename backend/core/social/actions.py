@@ -96,10 +96,10 @@ class SocialActions:
             return text
         return "visible"
 
-    def is_admin(self, current_user: dict[str, Any]) -> bool:
+    def is_admin(self, current_user: dict[str, Any] | None) -> bool:
         return is_admin_user(current_user)
 
-    def _can_view_content_doc(self, doc: dict[str, Any], current_user: dict[str, Any]) -> bool:
+    def _can_view_content_doc(self, doc: dict[str, Any], current_user: dict[str, Any] | None) -> bool:
         if self.is_admin(current_user):
             return True
         return self._content_status(doc) != "hidden"
@@ -165,7 +165,7 @@ class SocialActions:
     def _recalculate_posting_timeout(self, user_id: str) -> tuple[datetime | None, str]:
         return self.moderation_support.recalculate_posting_timeout(user_id)
 
-    def me_id(self, current_user: dict[str, Any]) -> str:
+    def me_id(self, current_user: dict[str, Any] | None) -> str:
         return viewer_user_id(current_user)
 
     def user_or_404(self, user_id: str) -> tuple[str, dict[str, Any]]:
@@ -275,10 +275,10 @@ class SocialActions:
     def search_users(self, query: str, limit: int, current_user: dict[str, Any]) -> list[UserPublic]:
         return self.profile_actions.search_users(query, limit, current_user)
 
-    def get_user_profile(self, user_id: str, current_user: dict[str, Any]) -> UserPublic:
+    def get_user_profile(self, user_id: str, current_user: dict[str, Any] | None) -> UserPublic:
         return self.profile_actions.get_user_profile(user_id, current_user)
 
-    def list_visible_spots(self, current_user: dict[str, Any]) -> list[SpotPublic]:
+    def list_visible_spots(self, current_user: dict[str, Any] | None) -> list[SpotPublic]:
         return self.spot_workflows.list_visible_spots(current_user)
 
     def create_spot(self, req: SpotUpsertRequest, current_user: dict[str, Any]) -> SpotPublic:
@@ -399,7 +399,7 @@ class SocialActions:
     def to_spot_comment(self, row: dict[str, Any] | None) -> SpotComment:
         return self.comment_actions.to_spot_comment(row)
 
-    def list_comments(self, spot_id: str, current_user: dict[str, Any]) -> list[SpotComment]:
+    def list_comments(self, spot_id: str, current_user: dict[str, Any] | None) -> list[SpotComment]:
         return self.comment_actions.list_comments(spot_id, current_user)
 
     def create_comment(self, spot_id: str, req: CommentCreateRequest, current_user: dict[str, Any]) -> SpotComment:

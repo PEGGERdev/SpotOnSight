@@ -6,7 +6,7 @@ export function createAppRouter(appCtx) {
   const router = createRouter({
     history: createWebHistory(),
     routes: [
-      { path: ROUTE_PATHS.ROOT, redirect: ROUTE_PATHS.HOME },
+      { path: ROUTE_PATHS.ROOT, redirect: ROUTE_PATHS.MAP },
       ...getRoutes(),
     ],
   })

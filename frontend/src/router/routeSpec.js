@@ -54,7 +54,7 @@ export const ROUTE_BINDINGS = Object.freeze([
     path: ROUTE_PATHS.MAP,
     name: ROUTE_NAMES.MAP,
     screen: UI_SCREENS.MAP,
-    meta: REQUIRES_AUTH_META,
+    meta: Object.freeze({}),
   }),
   Object.freeze({
     key: ROUTE_NAMES.SOCIAL,

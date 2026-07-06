@@ -19,12 +19,16 @@ onMounted(async () => {
   const startedAt = Date.now()
 
   try {
+    const loaders = []
     if (app.ui.isAuthenticated()) {
-      await Promise.all([
+      loaders.push(
         app.action('users').refreshProfile(),
         app.service('dashboard').reloadCoreData(),
-      ])
+      )
+    } else {
+      loaders.push(app.action('spots').reload())
     }
+    await Promise.all(loaders)
   } catch (error) {
     if (!app.ui.isAuthenticated()) {
       return

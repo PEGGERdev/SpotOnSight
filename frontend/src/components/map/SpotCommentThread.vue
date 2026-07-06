@@ -1,5 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { routeToAuth } from '../../router/routeSpec'
 import { useOwnerProfiles } from '../../composables/useOwnerProfiles'
 import ActionButton from '../common/ActionButton.vue'
 import AppTextField from '../common/AppTextField.vue'
@@ -19,10 +21,19 @@ const props = defineProps({
   onLoadUserProfile: { type: Function, default: null },
 })
 
+const router = useRouter()
 const editingCommentId = ref('')
 const editingCommentDraft = ref('')
 const reportComment = ref(null)
 const reportBusy = ref(false)
+
+function requireAuth() {
+  if (!String(props.currentUserId || '').trim()) {
+    router.push(routeToAuth())
+    return false
+  }
+  return true
+}
 const { ownerLabel, warmOwnerProfiles } = useOwnerProfiles((userId) => props.onLoadUserProfile(userId))
 
 watch(
@@ -41,6 +52,7 @@ function updateCommentDraft(next) {
 
 async function submitComment() {
   if (typeof props.onCreateComment !== 'function') return
+  if (!requireAuth()) return
   await props.onCreateComment(String(props.commentDraft || ''))
 }
 
@@ -115,7 +127,7 @@ async function submitReport(payload) {
       <span class="small text-secondary" v-if="commentsLoading">Loading...</span>
     </header>
 
-    <div class="comments-create" v-if="typeof onCreateComment === 'function'">
+    <div class="comments-create" v-if="String(currentUserId || '').trim() && typeof onCreateComment === 'function'">
       <AppTextField
         bare
         class-name="form-control"
@@ -131,6 +143,14 @@ async function submitReport(payload) {
         label="Post"
         :disabled="commentsBusy"
         @click="submitComment"
+      />
+    </div>
+    <div class="comments-create" v-else-if="!String(currentUserId || '').trim()">
+      <ActionButton
+        class-name="btn btn-outline-primary btn-sm"
+        icon="bi-box-arrow-in-right"
+        label="Sign in to comment"
+        @click="requireAuth"
       />
     </div>
 

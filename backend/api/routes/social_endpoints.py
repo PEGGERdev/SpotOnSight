@@ -64,9 +64,9 @@ def user_search_endpoint(repos):
 
 def user_profile_endpoint(repos):
     actions = _social_actions(repos)
-    from services.auth.current_user import get_current_user
+    from services.auth.current_user import get_optional_current_user
 
-    async def user_profile(user_id: str, current_user: dict = Depends(get_current_user)):
+    async def user_profile(user_id: str, current_user: dict | None = Depends(get_optional_current_user)):
         return actions.get_user_profile(user_id, current_user)
 
     return user_profile
@@ -85,9 +85,9 @@ def create_spot_endpoint(repos):
 
 def list_spots_endpoint(repos):
     actions = _social_actions(repos)
-    from services.auth.current_user import get_current_user
+    from services.auth.current_user import get_optional_current_user
 
-    async def list_spots(current_user: dict = Depends(get_current_user)):
+    async def list_spots(current_user: dict | None = Depends(get_optional_current_user)):
         return actions.list_visible_spots(current_user)
 
     return list_spots
@@ -420,9 +420,9 @@ def create_comment_endpoint(repos):
 
 def list_comments_endpoint(repos):
     actions = _social_actions(repos)
-    from services.auth.current_user import get_current_user
+    from services.auth.current_user import get_optional_current_user
 
-    async def list_comments(spot_id: str, current_user: dict = Depends(get_current_user)):
+    async def list_comments(spot_id: str, current_user: dict | None = Depends(get_optional_current_user)):
         return actions.list_comments(spot_id, current_user)
 
     return list_comments

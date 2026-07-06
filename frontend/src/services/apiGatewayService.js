@@ -47,7 +47,7 @@ export class ApiGatewayService extends ApiStateService {
   _resolveToken({ authenticated, token }) {
     const tokenOverride = asText(token)
     if (!authenticated) {
-      return tokenOverride
+      return tokenOverride || asText(this.token())
     }
 
     const activeToken = tokenOverride || asText(this.token())

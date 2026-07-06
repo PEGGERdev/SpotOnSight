@@ -1,5 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { routeToAuth } from '../../router/routeSpec'
 
 import SpotEditorModal from './SpotEditorModal.vue'
 import SpotDetailsModal from './SpotDetailsModal.vue'
@@ -49,6 +51,16 @@ const props = defineProps({
   focusRequest: { type: Object, default: () => ({ lat: null, lon: null, spotId: '' }) },
   behavior: { type: Object, required: true },
 })
+
+const router = useRouter()
+
+function requireAuth() {
+  if (!String(props.state?.session?.token || '').trim()) {
+    router.push(routeToAuth())
+    return false
+  }
+  return true
+}
 
 const { ownerLabel, ownerSearchText, warmOwnerProfiles } = useOwnerProfiles(
   (ownerId) => props.behavior.loadUserProfile(ownerId),
@@ -336,6 +348,7 @@ function applyFilterSubscription(subscription) {
 }
 
 function startCreateAt(lat, lon) {
+  if (!requireAuth()) return
   startWorkspaceCreateAt({ editorMode, detailsOpen, editorDraft, editorOpen, lat, lon })
 }
 
@@ -392,6 +405,7 @@ async function saveSpot(spot) {
 }
 
 async function deleteSpot() {
+  if (!requireAuth()) return
   if (!selectedSpot.value?.id) return
   const ok = await props.behavior.deleteSpot(selectedSpot.value.id)
   if (!ok) return
@@ -399,6 +413,7 @@ async function deleteSpot() {
 }
 
 async function toggleFavorite() {
+  if (!requireAuth()) return
   await toggleFavoriteSelection({
     selectedSpot,
     behavior: props.behavior,
@@ -407,6 +422,7 @@ async function toggleFavorite() {
 }
 
 async function toggleFavoriteForSpot(spot) {
+  if (!requireAuth()) return
   await toggleWorkspaceFavoriteForSpot({
     spot,
     behavior: props.behavior,
@@ -415,6 +431,7 @@ async function toggleFavoriteForSpot(spot) {
 }
 
 async function shareSpot(message) {
+  if (!requireAuth()) return false
   return shareSelectedSpot({
     selectedSpot,
     behavior: props.behavior,
@@ -442,10 +459,12 @@ function closeDetails() {
 }
 
 function handleCreateMeetupAtSpot(spot) {
+  if (!requireAuth()) return
   props.behavior.createMeetupAtSpot(spot)
 }
 
 function editFromDetails() {
+  if (!requireAuth()) return
   detailsOpen.value = false
   openEditorFromSpot(selectedSpot.value)
 }
@@ -537,7 +556,7 @@ function setCommentDraft(next) {
       :on-load-more="loadMoreSpots"
       :can-load-more="canLoadMoreSpots"
       :remaining-count="remainingSpotCount"
-      :on-report-spot="(spot, reason, details) => props.behavior.reportContent('spot', String(spot?.id || ''), reason, details)"
+      :on-report-spot="(spot, reason, details) => requireAuth() && props.behavior.reportContent('spot', String(spot?.id || ''), reason, details)"
     />
 
     <SpotEditorModal

@@ -94,7 +94,7 @@ class SocialProfileActions:
             out.append(to_user_public(user_doc))
         return out
 
-    def get_user_profile(self, user_id: str, current_user: dict[str, Any]):
+    def get_user_profile(self, user_id: str, current_user: dict[str, Any] | None):
         target_id, target = self.actions.user_or_404(user_id)
         me_id = viewer_user_id(current_user)
         if not self.actions.is_admin(current_user) and me_id != target_id and is_blocked_pair(self.repos, me_id, target_id):
