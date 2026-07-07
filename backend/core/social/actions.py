@@ -356,7 +356,7 @@ class SocialActions:
     def delete_ticket(self, ticket_id: str) -> dict[str, bool]:
         return self.support_actions.delete_ticket(ticket_id)
 
-    def create_moderation_report(self, req: ModerationReportCreateRequest, current_user: dict[str, Any]) -> ModerationReportPublic:
+    def create_moderation_report(self, req: ModerationReportCreateRequest, current_user: dict[str, Any] | None) -> ModerationReportPublic:
         return self.moderation_actions.create_moderation_report(req, current_user)
 
     def list_moderation_notifications(self, current_user: dict[str, Any]) -> list[ModerationNotificationPublic]:

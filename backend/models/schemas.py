@@ -222,6 +222,7 @@ class ModerationReportCreateRequest(BaseModel):
     target_id: str = Field(min_length=1, max_length=120)
     reason: Literal["spam", "harassment", "explicit_content", "impersonation", "other"] = "other"
     details: str = Field(default="", max_length=3000)
+    device_id: str = Field(default="", max_length=200)
 
 
 class ModerationReportReviewRequest(BaseModel):
@@ -240,6 +241,7 @@ class ModerationUserStatusRequest(BaseModel):
 class ModerationReportPublic(BaseModel):
     id: str
     reporter_user_id: str
+    reporter_device_id: str = ""
     target_type: Literal["spot", "comment", "meetup", "meetup_comment", "user"]
     target_id: str
     target_owner_user_id: str = ""

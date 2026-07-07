@@ -556,7 +556,7 @@ function setCommentDraft(next) {
       :on-load-more="loadMoreSpots"
       :can-load-more="canLoadMoreSpots"
       :remaining-count="remainingSpotCount"
-      :on-report-spot="(spot, reason, details) => requireAuth() && props.behavior.reportContent('spot', String(spot?.id || ''), reason, details)"
+      :on-report-spot="(spot, reason, details) => props.behavior.reportContent('spot', String(spot?.id || ''), reason, details)"
     />
 
     <SpotEditorModal

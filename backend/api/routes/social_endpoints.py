@@ -332,9 +332,9 @@ def delete_ticket_endpoint(repos):
 
 def create_report_endpoint(repos):
     actions = _social_actions(repos)
-    from services.auth.current_user import get_current_user
+    from services.auth.current_user import get_optional_current_user
 
-    async def create_report(entity_data: Dict[str, Any], current_user: dict = Depends(get_current_user)):
+    async def create_report(entity_data: Dict[str, Any], current_user: dict | None = Depends(get_optional_current_user)):
         req = ModerationReportCreateRequest.model_validate(entity_data)
         return actions.create_moderation_report(req, current_user)
 

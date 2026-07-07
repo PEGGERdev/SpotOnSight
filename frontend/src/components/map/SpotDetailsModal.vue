@@ -101,7 +101,6 @@ function goToSpot() {
 
 function reportSpot() {
   if (!props.canReport || typeof props.onReport !== 'function') return
-  if (!requireAuth()) return
   reportOpen.value = true
 }
 

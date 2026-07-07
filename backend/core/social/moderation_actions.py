@@ -6,6 +6,8 @@ from typing import Any
 from bson import ObjectId
 from fastapi import HTTPException, status
 
+from models.schemas import ModerationReportCreateRequest, ModerationReportPublic
+
 from .ids import as_text, safe_user_projection, serialize_id
 from .indexes import ensure_indexes
 from .mappers import (
@@ -23,18 +25,19 @@ class SocialModerationActions:
     def repos(self):
         return self.actions.repos
 
-    def create_moderation_report(self, req, current_user):
+    def create_moderation_report(self, req: ModerationReportCreateRequest, current_user: dict[str, Any] | None) -> ModerationReportPublic:
         ensure_indexes(self.repos)
         reporter_id = self.actions.me_id(current_user)
         target, target_owner_id = self.actions.moderation_support.target_content(req.target_type, req.target_id)
         normalized_target_type = as_text(req.target_type).lower()
-        if normalized_target_type == "user" and target_owner_id == reporter_id:
+        if normalized_target_type == "user" and target_owner_id and target_owner_id == reporter_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot report yourself")
-        if normalized_target_type != "user" and target_owner_id == reporter_id:
+        if normalized_target_type != "user" and target_owner_id and target_owner_id == reporter_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot report your own content")
         now = self.actions._now()
         doc = {
             "reporter_user_id": reporter_id,
+            "reporter_device_id": as_text(req.device_id) or "",
             "target_type": normalized_target_type,
             "target_id": as_text(req.target_id),
             "target_owner_user_id": target_owner_id,

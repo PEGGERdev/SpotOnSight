@@ -2,6 +2,7 @@ import { extractSpotId } from '../models/spotMapper'
 import { normalizeUser } from '../models/userMapper'
 import { API_ENDPOINTS } from '../api/registry'
 import { asText, uniqueTextList } from '../utils/sanitizers'
+import { getDeviceId } from '../utils/deviceId'
 import { ApiStateService } from './baseService'
 
 export class SocialService extends ApiStateService {
@@ -96,6 +97,7 @@ export class SocialService extends ApiStateService {
           target_id: asText(targetId),
           reason: asText(reason) || 'other',
           details: asText(details),
+          device_id: getDeviceId(),
         },
       })
       this.clearError()

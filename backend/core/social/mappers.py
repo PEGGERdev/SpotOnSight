@@ -149,6 +149,7 @@ def to_moderation_report_public(doc: dict[str, Any]) -> ModerationReportPublic:
     return ModerationReportPublic(
         id=serialize_id(doc.get("_id")),
         reporter_user_id=as_text(doc.get("reporter_user_id")),
+        reporter_device_id=as_text(doc.get("reporter_device_id")),
         target_type=as_text(doc.get("target_type")),
         target_id=as_text(doc.get("target_id")),
         target_owner_user_id=as_text(doc.get("target_owner_user_id")),

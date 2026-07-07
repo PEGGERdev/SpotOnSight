@@ -295,6 +295,7 @@ registerApiEndpoint({
   key: API_ENDPOINTS.SOCIAL_REPORTS_CREATE,
   method: 'POST',
   path: '/social/reports',
+  authenticated: false,
 })
 
 registerApiEndpoint({
